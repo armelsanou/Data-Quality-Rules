@@ -54,26 +54,13 @@ if "rules" not in st.session_state:
     else:
         st.session_state["rules"] = []
 
-# État pour contrôler l'affichage de la boîte de dialogue
+# États pour contrôler l'affichage des boîtes de dialogue
 if "show_dialog" not in st.session_state:
     st.session_state.show_dialog = False
-
-# Définition des règles et de leurs libellés lisibles
-""" expectations_mapping = {
-    "expect_column_distinct_values_to_be_in_set": "Vérifier les valeurs distinctes dans un ensemble",
-    "expect_column_distinct_values_to_contain_set": "Vérifier si un ensemble est contenu dans les valeurs distinctes",
-    "expect_column_distinct_values_to_equal_set": "Vérifier si les valeurs distinctes sont égales à un ensemble",
-    "expect_column_max_to_be_between": "Vérifier la valeur maximale dans une colonne",
-    "expect_column_min_to_be_between": "Vérifier la valeur minimale dans une colonne",
-    "expect_column_to_exist": "Vérifier l'existence d'une colonne",
-    "expect_column_value_lengths_to_be_between": "Vérifier la longueur des valeurs dans une colonne",
-    "expect_column_value_lengths_to_equal": "Vérifier une longueur précise des valeurs",
-    "expect_column_values_to_be_between": "Vérifier que les valeurs sont dans une plage",
-    "expect_column_values_to_be_in_set": "Vérifier que les valeurs sont dans un ensemble",
-    "expect_column_values_to_be_null": "Vérifier que les valeurs sont nulles",
-    "expect_column_values_to_be_unique": "Vérifier l'unicité des valeurs dans une colonne",
-    "expect_column_values_to_match_regex": "Vérifier que les valeurs respectent une expression régulière",
-} """
+if "show_delete_dialog" not in st.session_state:
+    st.session_state.show_delete_dialog = False
+if "delete_index" not in st.session_state:
+    st.session_state.delete_index = None
 
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
@@ -152,6 +139,21 @@ def show_rule_info(rule_key):
     st.write(choosedRule["description"])
     if st.button("OK, j'ai compris !"):
         close_dialog()
+        st.rerun()
+
+# Fonction pour confirmer la suppression d'une règle
+def confirm_delete(index):
+    st.session_state.delete_index = index
+    st.session_state.show_delete_dialog = True
+
+# Fonction pour supprimer la règle après confirmation
+def delete_rule():
+    index = st.session_state.delete_index
+    if index is not None and 0 <= index < len(st.session_state["rules"]):
+        st.session_state["rules"].pop(index)
+        with open(RULES_FILE, "w", encoding="utf-8") as file:
+            json.dump(st.session_state["rules"], file, indent=2)
+        st.session_state.show_delete_dialog = False  # Fermer la boîte de confirmation
         st.rerun()
 
 expectation_label = st.sidebar.selectbox(
@@ -254,6 +256,9 @@ if st.session_state["rules"]:
         st.json(rule)
 
         col1, col2 = st.columns(2)
+            # Boutons Modifier et Supprimer
+    for index, rule in enumerate(st.session_state["rules"]):
+        col1, col2 = st.columns(2)
         with col1:
             if st.button("Modifier", key=f"edit_{index}"):
                 st.session_state["edit_index"] = index
@@ -262,11 +267,20 @@ if st.session_state["rules"]:
 
         with col2:
             if st.button("Supprimer", key=f"delete_{index}"):
-                st.session_state["rules"].pop(index)
-                with open(RULES_FILE, "w", encoding="utf-8") as file:
-                    json.dump(st.session_state["rules"], file, indent=2)
-                    st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
+                confirm_delete(index)  # Ouvrir la boîte de confirmation
+
+# Affichage de la boîte de confirmation de suppression
+if st.session_state.show_delete_dialog:
+    with st.dialog("Confirmation de suppression"):
+        st.write("Voulez-vous vraiment supprimer cette règle ? Cette action est irréversible.")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Annuler"):
+                st.session_state.show_delete_dialog = False
                 st.rerun()
+        with col2:
+            if st.button("Confirmer"):
+                delete_rule()
 
 else:
     st.info("Aucune règle ajoutée pour le moment.")

@@ -135,6 +135,14 @@ if st.session_state["rules"]:
     ]
     st.table(rules_table)
 
+    #Affichage du boutton pour exporter au début
+    st.download_button(
+        label="Exporter les règles en JSON",
+        data=json.dumps(st.session_state["rules"], indent=2),
+        file_name=RULES_FILE,
+        mime="application/json",
+    )
+
     for index, rule in enumerate(st.session_state["rules"]):
         st.write(f"### Règle {index + 1}")
         st.json(rule)
@@ -152,12 +160,6 @@ if st.session_state["rules"]:
                     json.dump(st.session_state["rules"], file, indent=2)
                 st.rerun()
 
-    st.download_button(
-        label="Exporter les règles en JSON",
-        data=json.dumps(st.session_state["rules"], indent=2),
-        file_name=RULES_FILE,
-        mime="application/json",
-    )
 else:
     st.info("Aucune règle ajoutée pour le moment.")
 
@@ -177,7 +179,7 @@ st.markdown(
         }
     </style>
     <div class="footer">
-        Développé avec ❤️ par Sanou - 2025
+        Tool for data quality - 2025
     </div>
     """,
     unsafe_allow_html=True,

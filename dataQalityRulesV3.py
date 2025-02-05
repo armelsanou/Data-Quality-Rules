@@ -55,7 +55,7 @@ if "rules" not in st.session_state:
         st.session_state["rules"] = []
 
 # Définition des règles et de leurs libellés lisibles
-expectations_mapping = {
+"""expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": "Vérifier les valeurs distinctes dans un ensemble",
     "expect_column_distinct_values_to_contain_set": "Vérifier si un ensemble est contenu dans les valeurs distinctes",
     "expect_column_distinct_values_to_equal_set": "Vérifier si les valeurs distinctes sont égales à un ensemble",
@@ -69,6 +69,67 @@ expectations_mapping = {
     "expect_column_values_to_be_null": "Vérifier que les valeurs sont nulles",
     "expect_column_values_to_be_unique": "Vérifier l'unicité des valeurs dans une colonne",
     "expect_column_values_to_match_regex": "Vérifier que les valeurs respectent une expression régulière",
+}"""
+
+# Fonction pour afficher une boîte de dialogue explicative
+def show_rule_description(rule_key):
+    st.session_state["selected_rule"] = rule_key
+    st.session_state["show_modal"] = True
+
+# Définition des règles et de leurs descriptions
+expectations_mapping = {
+    "expect_column_distinct_values_to_be_in_set": {
+        "label": "Vérifier les valeurs distinctes dans un ensemble",
+        "description": "Cette règle permet de vérifier si toutes les valeurs distinctes d'une colonne sont incluses dans un ensemble spécifique.\nExemple : Pour une colonne 'Statut', les valeurs distinctes doivent être parmi ['Actif', 'Inactif', 'En attente']."
+    },
+    "expect_column_distinct_values_to_contain_set": {
+        "label": "Vérifier si un ensemble est contenu dans les valeurs distinctes",
+        "description": "Cette règle vérifie si un ensemble donné est inclus dans les valeurs distinctes d'une colonne.\nExemple : Vérifier que les catégories 'A' et 'B' existent bien dans une colonne 'Type'."
+    },
+    "expect_column_distinct_values_to_equal_set": {
+        "label": "Vérifier si les valeurs distinctes sont égales à un ensemble",
+        "description": "Cette règle s'assure que l'ensemble des valeurs distinctes d'une colonne correspond exactement à une liste donnée.\nExemple : Une colonne 'Statut' doit uniquement contenir ['Actif', 'Inactif']."
+    },
+    "expect_column_max_to_be_between": {
+        "label": "Vérifier la valeur maximale dans une colonne",
+        "description": "Cette règle vérifie que la valeur maximale d'une colonne se situe dans une plage définie.\nExemple : La colonne 'Prix' doit avoir un maximum compris entre 100 et 500."
+    },
+    "expect_column_min_to_be_between": {
+        "label": "Vérifier la valeur minimale dans une colonne",
+        "description": "Cette règle s'assure que la valeur minimale d'une colonne respecte une plage spécifique.\nExemple : Le salaire minimum doit être d'au moins 1000€."
+    },
+    "expect_column_to_exist": {
+        "label": "Vérifier l'existence d'une colonne",
+        "description": "Cette règle garantit qu'une colonne spécifique existe dans le dataset.\nExemple : Vérifier que la colonne 'Date de naissance' est bien présente."
+    },
+    "expect_column_value_lengths_to_be_between": {
+        "label": "Vérifier la longueur des valeurs dans une colonne",
+        "description": "Cette règle s'assure que la longueur des valeurs d'une colonne est comprise dans une plage donnée.\nExemple : Un code postal doit contenir entre 5 et 10 caractères."
+    },
+    "expect_column_value_lengths_to_equal": {
+        "label": "Vérifier une longueur précise des valeurs",
+        "description": "Cette règle impose une longueur précise aux valeurs d'une colonne.\nExemple : Un INS doit comporter exactement 3 caractères."
+    },
+    "expect_column_values_to_be_between": {
+        "label": "Vérifier que les valeurs sont dans une plage",
+        "description": "Cette règle vérifie que toutes les valeurs d'une colonne sont comprises entre un minimum et un maximum.\nExemple : L'âge des employés doit être compris entre 18 et 65 ans."
+    },
+    "expect_column_values_to_be_in_set": {
+        "label": "Vérifier que les valeurs sont dans un ensemble",
+        "description": "Cette règle s'assure que toutes les valeurs d'une colonne appartiennent à un ensemble défini.\nExemple : Une colonne 'Environnement' ne doit contenir que 'PROD' ou 'RECETTE'."
+    },
+    "expect_column_values_to_be_null": {
+        "label": "Vérifier que les valeurs sont nulles",
+        "description": "Cette règle vérifie qu'une colonne contient uniquement des valeurs nulles.\nExemple : Une colonne 'Commentaires' peut être vide pour certaines lignes."
+    },
+    "expect_column_values_to_be_unique": {
+        "label": "Vérifier l'unicité des valeurs dans une colonne",
+        "description": "Cette règle garantit qu'aucune valeur ne se répète dans une colonne.\nExemple : Une colonne 'Numéro de client' doit contenir des valeurs uniques."
+    },
+    "expect_column_values_to_match_regex": {
+        "label": "Vérifier que les valeurs respectent une expression régulière",
+        "description": "Cette règle assure que les valeurs d'une colonne respectent un format spécifique (regex).\nExemple : Une colonne 'Email' doit respecter le format 'exemple@domaine.com'."
+    }
 }
 
 # Afficher le Navbar
@@ -77,6 +138,27 @@ navbar()
 # Sidebar pour la gestion des règles
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
+
+selected_rule = st.sidebar.selectbox(
+    "Choisissez une règle de qualité :",
+    options=list(expectations_mapping.keys()),
+    format_func=lambda x: expectations_mapping[x]["label"],
+    on_change=show_rule_description,  # Afficher la boîte de dialogue sur sélection
+    args=(st.session_state.get("selected_rule"),),
+)
+
+# Affichage d'une boîte de dialogue explicative
+if st.session_state.get("show_modal", False):
+    st.markdown(
+        f"""
+        <div style='background-color: #eef; padding: 15px; border-radius: 5px; margin-bottom: 10px;'>
+            <strong>{expectations_mapping[selected_rule]["label"]}</strong><br>
+            {expectations_mapping[selected_rule]["description"]}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.session_state["show_modal"] = False  # Fermer après affichage
 
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",

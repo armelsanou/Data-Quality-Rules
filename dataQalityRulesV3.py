@@ -172,6 +172,8 @@ if expectation_label:
     with st.expander("Description de la règle"):
         st.write(f"### {expectations_mapping[expectation_label]["label"]}")
         st.write(expectations_mapping[expectation_label]["description"])
+        if st.button("OK, j'ai compris !"):
+            close_dialog()
 
 column_name = st.sidebar.text_input("Nom de la colonne :")
 

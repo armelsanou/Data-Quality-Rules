@@ -84,6 +84,10 @@ expectation_label = st.sidebar.selectbox(
     format_func=lambda x: expectations_mapping[x],
 )
 
+# Affichage d'une alerte expliquant la règle sélectionnée
+if selected_rule:
+    st.sidebar.warning(expectations_mapping[expectation_label])
+
 # Affichage d'une fenêtre modale pour la description
 if expectation_label:
     with st.expander("Description de la règle"):

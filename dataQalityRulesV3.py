@@ -155,12 +155,13 @@ if expectation_label:
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
-    st.sidebar.warning(expectations_mapping[expectation_label])
+    st.sidebar.warning(expectations_mapping[expectation_label]["label"])
+    st.sidebar.error(expectation_label)
 
 # Affichage d'une fenêtre modale pour la description
 if expectation_label:
     with st.expander("Description de la règle"):
-        st.write(f"### {expectations_mapping[expectation_label]}")
+        st.write(f"### {expectations_mapping[expectation_label]["label"]}")
         st.write("Voici une explication détaillée de la règle sélectionnée...")
 
 column_name = st.sidebar.text_input("Nom de la colonne :")

@@ -71,11 +71,6 @@ if "rules" not in st.session_state:
     "expect_column_values_to_match_regex": "Vérifier que les valeurs respectent une expression régulière",
 }"""
 
-# Fonction pour afficher une boîte de dialogue explicative
-def show_rule_description(rule_key):
-    st.session_state["selected_rule"] = rule_key
-    st.session_state["show_modal"] = True
-
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": {
@@ -139,32 +134,24 @@ navbar()
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
 
-selected_rule = st.sidebar.selectbox(
-    "Choisissez une règle de qualité :",
-    options=list(expectations_mapping.keys()),
-    format_func=lambda x: expectations_mapping[x]["label"],
-    on_change=show_rule_description,  # Afficher la boîte de dialogue sur sélection
-    args=(st.session_state.get("selected_rule"),),
-)
-
-# Affichage d'une boîte de dialogue explicative
-if st.session_state.get("show_modal", False):
-    st.markdown(
-        f"""
-        <div style='background-color: #eef; padding: 15px; border-radius: 5px; margin-bottom: 10px;'>
-            <strong>{expectations_mapping[selected_rule]["label"]}</strong><br>
-            {expectations_mapping[selected_rule]["description"]}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.session_state["show_modal"] = False  # Fermer après affichage
+# Boîte de dialogue pour afficher la description de la règle sélectionnée
+@st.dialog("Explication de la règle")
+def show_rule_info(rule_key):
+    rule = expectations_mapping[rule_key]
+    st.write(f"**{rule['label']}**")
+    st.write(rule["description"])
+    if st.button("OK, j'ai compris !"):
+        st.rerun()
 
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",
     options=list(expectations_mapping.keys()),
-    format_func=lambda x: expectations_mapping[x],
+    format_func=lambda x: expectations_mapping[x]["label"],
+    on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
 )
+
+#if expectation_label:
+    #show_rule_info(selected_rule)
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:

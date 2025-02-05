@@ -249,6 +249,7 @@ if st.session_state["rules"]:
                 with open(RULES_FILE, "w", encoding="utf-8") as file:
                     json.dump(st.session_state["rules"], file, indent=2)
                     st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
+                    st.rerun()
 
 else:
     st.info("Aucune règle ajoutée pour le moment.")

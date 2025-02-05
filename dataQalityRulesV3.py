@@ -127,12 +127,37 @@ def show_rule_info(rule_key):
         close_dialog()
         st.rerun()
 
+# Initialiser l'état de la boîte de dialogue
+if "show_dialog" not in st.session_state:
+    st.session_state["show_dialog"] = False
+
+# Fonction pour afficher la boîte de dialogue
+def show_rule_info(rule_key):
+    st.session_state["selected_rule"] = rule_key
+    st.session_state["show_dialog"] = True
+
+# Fonction pour fermer la boîte de dialogue
+def close_dialog():
+    st.session_state["show_dialog"] = False
+    st.rerun()
+
+# Sélection de la règle
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",
     options=list(expectations_mapping.keys()),
     format_func=lambda x: expectations_mapping[x]["label"],
-    #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
+    on_change=lambda: show_rule_info(expectation_label)
 )
+
+# Affichage de la boîte de dialogue si nécessaire
+if st.session_state["show_dialog"]:
+    choosedRule = expectations_mapping[st.session_state["selected_rule"]]
+    
+    with st.expander("Explication de la règle", expanded=True):
+        st.write(f"### {choosedRule['label']}")
+        st.write(choosedRule["description"])
+        if st.button("OK, j'ai compris !"):
+            close_dialog()
 
 if expectation_label:
     show_rule_info(expectation_label)

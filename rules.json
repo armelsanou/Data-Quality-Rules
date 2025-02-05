@@ -1,0 +1,28 @@
+[
+  {
+    "expectation_config": {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "trte",
+        "min_value": 0.0,
+        "max_value": 100.0
+      },
+      "meta": {}
+    }
+  },
+  {
+    "expectation_config": {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "michelle maelle guemegne",
+        "value_set": [
+          1.0,
+          "ae",
+          4.0,
+          "Loic"
+        ]
+      },
+      "meta": {}
+    }
+  }
+]

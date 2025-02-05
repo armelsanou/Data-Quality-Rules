@@ -240,7 +240,7 @@ if st.session_state["rules"]:
     ]
     st.table(rules_table)
 
-    #Affichage du boutton pour exporter au débu
+    #Affichage du boutton pour exporter au début
     st.download_button(
         label="Exporter les règles en JSON",
         data=json.dumps(st.session_state["rules"], indent=2),

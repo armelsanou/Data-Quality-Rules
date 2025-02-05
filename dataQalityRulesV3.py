@@ -14,16 +14,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.html(
-    '''
-        <style>
-            div[data-testid="stDialog"]>button[aria-label="OK, j'ai compris !"] {
-                display: none;
-            }
-        </style>
-    '''
-)
-
 # Fonction pour afficher le navbar
 def navbar():
     # Navbar sous la Sidebar
@@ -224,16 +214,8 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
 # Affichage des règles enregistrées
 st.header("Liste des Règles de Qualité")
 if st.session_state["rules"]:
-    rules_table = [
-        {
-            #"Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
-            "Règle": rule["expectation_config"]["expectation_type"]["rule"],
-            "Colonne": rule["expectation_config"]["kwargs"]["column"],
-            "Paramètres": rule["expectation_config"]["kwargs"],
-        }
-        for rule in st.session_state["rules"]
-    ]
-    st.table(rules_table)
+    rules_table = [{"Colonne": rule["column"], "Règle": rule["label"]} for rule in st.session_state["rules"]]
+    st.table(rules_table)  # Affichage sous forme de tableau
 
     #Affichage du boutton pour exporter au début
     st.download_button(

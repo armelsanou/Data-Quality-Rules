@@ -14,7 +14,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Appliquer un style CSS pour élargir le tableau
+# Appliquer un style CSS pour élargir le tableau et le contenu central
 st.markdown(
     """
     <style>

@@ -58,16 +58,6 @@ if "rules" not in st.session_state:
 if "show_dialog" not in st.session_state:
     st.session_state["show_dialog"] = False
 
-# Fonction pour afficher la boîte de dialogue
-def show_rule_info(rule_key):
-    st.session_state["selected_rule"] = rule_key
-    st.session_state["show_dialog"] = True
-
-# Fonction pour fermer la boîte de dialogue
-def close_dialog():
-    st.session_state["show_dialog"] = False
-    st.rerun()
-
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": {
@@ -148,6 +138,16 @@ expectation_label = st.sidebar.selectbox(
     #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
     on_change=lambda: show_rule_info(expectation_label)
 )
+
+# Fonction pour afficher la boîte de dialogue
+def show_rule_info(rule_key):
+    st.session_state["expectation_label"] = rule_key
+    st.session_state["show_dialog"] = True
+
+# Fonction pour fermer la boîte de dialogue
+def close_dialog():
+    st.session_state["show_dialog"] = False
+    st.rerun()
 
 #if expectation_label:
     #show_rule_info(expectation_label)

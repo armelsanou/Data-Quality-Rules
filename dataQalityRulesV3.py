@@ -132,7 +132,7 @@ navbar()
 
 # Sidebar pour la gestion des règles
 st.sidebar.header("Gestion des Règles de Qualité")
-st.sidebar.subheader("Ajouter / Modifier une Règle")
+st.sidebar.subheader("Ajouter / Modifier une Règle", type='success')
 
 # Boîte de dialogue pour afficher la description de la règle sélectionnée
 @st.dialog("Explication de la règle")
@@ -156,7 +156,6 @@ if expectation_label:
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
     st.sidebar.warning(expectations_mapping[expectation_label]["label"])
-    st.sidebar.error(expectation_label)
 
 # Affichage d'une fenêtre modale pour la description
 if expectation_label:

@@ -223,6 +223,8 @@ if st.session_state["rules"]:
         }
         for rule in st.session_state["rules"]
     ]
+    st.table(rules_table)
+    
     #Affichage du boutton pour exporter au début
     st.download_button(
         label="Exporter les règles en JSON",

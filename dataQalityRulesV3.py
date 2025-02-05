@@ -214,9 +214,15 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
 # Affichage des règles enregistrées
 st.header("Liste des Règles de Qualité")
 if st.session_state["rules"]:
-    rules_table = [{"Colonne": rule["column"], "Règle": rule["label"]} for rule in st.session_state["rules"]]
-    st.table(rules_table)  # Affichage sous forme de tableau
-
+    rules_table = [
+        {
+            #"Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
+            "Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"])["label"],
+            "Colonne": rule["expectation_config"]["kwargs"]["column"],
+            "Paramètres": rule["expectation_config"]["kwargs"],
+        }
+        for rule in st.session_state["rules"]
+    ]
     #Affichage du boutton pour exporter au début
     st.download_button(
         label="Exporter les règles en JSON",

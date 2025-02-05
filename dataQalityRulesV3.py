@@ -227,7 +227,7 @@ if st.session_state["rules"]:
     rules_table = [
         {
             #"Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
-            "Règle": expectations_mapping[rule["expectation_config"]["expectation_type"]]["label"]
+            "Règle": rule["expectation_config"]["expectation_type"]]["rule"]
             "Colonne": rule["expectation_config"]["kwargs"]["column"],
             "Paramètres": rule["expectation_config"]["kwargs"],
         }

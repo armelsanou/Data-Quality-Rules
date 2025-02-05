@@ -154,7 +154,7 @@ def close_dialog():
 
 # Affichage de la boîte de dialogue si nécessaire
 if st.session_state["show_dialog"]:
-    choosedRule = expectations_mapping[st.session_state["selected_rule"]]
+    choosedRule = expectations_mapping[st.session_state["expectation_label"]]
     
     with st.expander("Explication de la règle", expanded=True):
         st.write(f"### {choosedRule['label']}")

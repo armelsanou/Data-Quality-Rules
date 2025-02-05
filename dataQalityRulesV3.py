@@ -17,7 +17,7 @@ st.markdown(
 st.html(
     '''
         <style>
-            div[aria-label="dialog"]>button[aria-label="OK, j'ai compris !"] {
+            div[data-testid="stDialog"]>button[aria-label="OK, j'ai compris !"] {
                 display: none;
             }
         </style>

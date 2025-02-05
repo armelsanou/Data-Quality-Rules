@@ -2,6 +2,18 @@ import streamlit as st
 import json
 import os
 
+# Appliquer un style CSS pour élargir la sidebar
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebar"] {
+            width: 50% !important;  /* Augmente la largeur de la sidebar */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Fonction pour afficher le navbar
 def navbar():
     # Navbar sous la Sidebar

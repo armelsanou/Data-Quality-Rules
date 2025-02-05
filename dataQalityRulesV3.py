@@ -147,12 +147,12 @@ def close_dialog():
 def show_rule_info(rule_key):
     choosedRule = expectations_mapping[rule_key]
     st.session_state.show_dialog = True
-    with st.dialog("Explication de la règle"):
-        st.write(f"**{choosedRule['label']}**")
-        st.write(choosedRule["description"])
-        if st.button("OK, j'ai compris !"):
-            close_dialog()
-            st.rerun()
+    #with st.dialog("Explication de la règle"):
+    st.write(f"**{choosedRule['label']}**")
+    st.write(choosedRule["description"])
+    if st.button("OK, j'ai compris !"):
+        close_dialog()
+        st.rerun()
 
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",

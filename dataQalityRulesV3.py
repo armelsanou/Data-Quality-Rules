@@ -85,7 +85,7 @@ expectation_label = st.sidebar.selectbox(
 )
 
 # Affichage d'une alerte expliquant la règle sélectionnée
-if selected_rule:
+if expectation_label:
     st.sidebar.warning(expectations_mapping[expectation_label])
 
 # Affichage d'une fenêtre modale pour la description

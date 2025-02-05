@@ -54,6 +54,10 @@ if "rules" not in st.session_state:
     else:
         st.session_state["rules"] = []
 
+# État pour contrôler l'affichage de la boîte de dialogue
+if "show_dialog" not in st.session_state:
+    st.session_state.show_dialog = False
+
 # Définition des règles et de leurs libellés lisibles
 """ expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": "Vérifier les valeurs distinctes dans un ensemble",
@@ -134,14 +138,21 @@ navbar()
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
 
+# Fonction pour fermer la boîte de dialogue
+def close_dialog():
+    st.session_state.show_dialog = False
+
 # Boîte de dialogue pour afficher la description de la règle sélectionnée
 @st.dialog("Explication de la règle")
 def show_rule_info(rule_key):
     choosedRule = expectations_mapping[rule_key]
-    st.write(f"**{choosedRule['label']}**")
-    st.write(choosedRule["description"])
-    if st.button("OK, j'ai compris !"):
-        st.rerun()
+    st.session_state.show_dialog = True
+    with st.dialog("Explication de la règle"):
+        st.write(f"**{choosedRule['label']}**")
+        st.write(choosedRule["description"])
+        if st.button("OK, j'ai compris !"):
+            close_dialog()
+            st.rerun()
 
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",
@@ -212,7 +223,8 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
             st.session_state["rules"].append(config)
             with open(RULES_FILE, "w", encoding="utf-8") as file:
                 json.dump(st.session_state["rules"], file, indent=2)
-
+                
+            st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
             st.sidebar.success("Règle ajoutée avec succès !")
             st.rerun()
 
@@ -246,12 +258,14 @@ if st.session_state["rules"]:
             if st.button("Modifier", key=f"edit_{index}"):
                 st.session_state["edit_index"] = index
                 st.session_state["edit_rule"] = rule
+                st.session_state.show_dialog = False  # Fermer la boîte de dialogue
 
         with col2:
             if st.button("Supprimer", key=f"delete_{index}"):
                 st.session_state["rules"].pop(index)
                 with open(RULES_FILE, "w", encoding="utf-8") as file:
                     json.dump(st.session_state["rules"], file, indent=2)
+                    st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
                 st.rerun()
 
 else:

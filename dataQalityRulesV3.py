@@ -84,6 +84,12 @@ expectation_label = st.sidebar.selectbox(
     format_func=lambda x: expectations_mapping[x],
 )
 
+# Affichage d'une fenêtre modale pour la description
+if expectation_label:
+    with st.expander("Description de la règle"):
+        st.write(f"### {expectations_mapping[expectation_label]}")
+        st.write("Voici une explication détaillée de la règle sélectionnée...")
+
 column_name = st.sidebar.text_input("Nom de la colonne :")
 
 # Champs dynamiques pour les paramètres

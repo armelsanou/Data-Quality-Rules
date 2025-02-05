@@ -86,9 +86,12 @@ if expectation_label in [
     if value_set:
         params["value_set"] = [v.strip() for v in value_set.split(",")]
 
-if expectation_label in ["expect_column_max_to_be_between", "expect_column_min_to_be_between", "expect_column_values_to_be_between"]:
+if expectation_label in ["expect_column_max_to_be_between", "expect_column_min_to_be_between", "expect_column_values_to_be_between", "expect_column_value_lengths_to_be_between"]:
     params["min_value"] = st.sidebar.number_input("Valeur minimale :", value=0.0)
     params["max_value"] = st.sidebar.number_input("Valeur maximale :", value=100.0)
+
+if expectation_label == "expect_column_value_lengths_to_equal" :
+    params["value"] = st.sidebar.number_input("Valeur", value=0.0)
 
 if expectation_label == "expect_column_values_to_match_regex":
     params["regex"] = st.sidebar.text_input("Expression régulière :")

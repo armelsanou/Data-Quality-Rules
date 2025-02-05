@@ -149,6 +149,10 @@ expectation_label = st.sidebar.selectbox(
     #on_change=lambda: show_rule_info(expectation_label)
 )
 
+if expectation_label:
+    show_rule_info(expectation_label)
+    st.rerun()
+
 # Affichage de la boîte de dialogue si nécessaire
 if st.session_state["show_dialog"]:
     choosedRule = expectations_mapping[st.session_state["selected_rule"]]
@@ -158,10 +162,6 @@ if st.session_state["show_dialog"]:
         st.write(choosedRule["description"])
         if st.button("OK, j'ai compris !"):
             close_dialog()
-
-if expectation_label:
-    show_rule_info(expectation_label)
-    st.rerun()
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:

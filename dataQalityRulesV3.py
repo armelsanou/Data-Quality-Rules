@@ -147,11 +147,11 @@ expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",
     options=list(expectations_mapping.keys()),
     format_func=lambda x: expectations_mapping[x]["label"],
-    on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
+    #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
 )
 
-#if expectation_label:
-    #show_rule_info(selected_rule)
+if expectation_label:
+    show_rule_info(expectation_label)
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:

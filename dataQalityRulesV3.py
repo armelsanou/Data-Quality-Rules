@@ -14,6 +14,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.html(
+    '''
+        <style>
+            div[aria-label="dialog"]>button[aria-label="OK, j'ai compris !"] {
+                display: none;
+            }
+        </style>
+    '''
+)
+
 # Fonction pour afficher le navbar
 def navbar():
     # Navbar sous la Sidebar

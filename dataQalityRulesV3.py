@@ -117,24 +117,21 @@ navbar()
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
 
-# Boîte de dialogue pour afficher la description de la règle sélectionnée
-@st.dialog("Explication de la règle")
-def show_rule_info(rule_key):
-    choosedRule = expectations_mapping[rule_key]
-    st.write(f"**{choosedRule['label']}**")
-    st.write(choosedRule["description"])
-    if st.button("OK, j'ai compris !"):
-        close_dialog()
-        st.rerun()
-
 # Initialiser l'état de la boîte de dialogue
 if "show_dialog" not in st.session_state:
     st.session_state["show_dialog"] = False
 
 # Fonction pour afficher la boîte de dialogue
+# Boîte de dialogue pour afficher la description de la règle sélectionnée
+@st.dialog("Explication de la règle")
 def show_rule_info(rule_key):
     st.session_state["selected_rule"] = rule_key
     st.session_state["show_dialog"] = True
+    #st.write(f"**{choosedRule['label']}**")
+    #st.write(choosedRule["description"])
+    if st.button("OK, j'ai compris !"):
+        close_dialog()
+        st.rerun()
 
 # Fonction pour fermer la boîte de dialogue
 def close_dialog():

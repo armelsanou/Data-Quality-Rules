@@ -14,6 +14,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Appliquer un style CSS pour élargir le tableau
+st.markdown(
+    """
+    <style>
+        [data-testid="stMainBlockContainer"]{
+            max-width : 100% !important;  /* Faire en sorte que le tableau prenne tout le contenu de la page */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Fonction pour afficher le navbar
 def navbar():
     # Navbar sous la Sidebar
@@ -53,6 +65,27 @@ if "rules" not in st.session_state:
                 st.session_state["rules"] = []
     else:
         st.session_state["rules"] = []
+
+# État pour contrôler l'affichage de la boîte de dialogue
+if "show_dialog" not in st.session_state:
+    st.session_state.show_dialog = False
+
+# Définition des règles et de leurs libellés lisibles
+#expectations_mapping = {
+#    "expect_column_distinct_values_to_be_in_set": "Vérifier les valeurs distinctes dans un ensemble",
+#    "expect_column_distinct_values_to_contain_set": "Vérifier si un ensemble est contenu dans les valeurs distinctes",
+#    "expect_column_distinct_values_to_equal_set": "Vérifier si les valeurs distinctes sont égales à un ensemble",
+#    "expect_column_max_to_be_between": "Vérifier la valeur maximale dans une colonne",
+#    "expect_column_min_to_be_between": "Vérifier la valeur minimale dans une colonne",
+#    "expect_column_to_exist": "Vérifier l'existence d'une colonne",
+#    "expect_column_value_lengths_to_be_between": "Vérifier la longueur des valeurs dans une colonne",
+#    "expect_column_value_lengths_to_equal": "Vérifier une longueur précise des valeurs",
+#    "expect_column_values_to_be_between": "Vérifier que les valeurs sont dans une plage",
+#    "expect_column_values_to_be_in_set": "Vérifier que les valeurs sont dans un ensemble",
+#    "expect_column_values_to_be_null": "Vérifier que les valeurs sont nulles",
+#    "expect_column_values_to_be_unique": "Vérifier l'unicité des valeurs dans une colonne",
+#    "expect_column_values_to_match_regex": "Vérifier que les valeurs respectent une expression régulière",
+#}
 
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
@@ -117,60 +150,22 @@ navbar()
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
 
-# Initialiser l'état de la boîte de dialogue
-if "show_dialog" not in st.session_state:
-    st.session_state["show_dialog"] = False
-
-# Fonction pour afficher la boîte de dialogue
-# Boîte de dialogue pour afficher la description de la règle sélectionnée
-@st.dialog("Explication de la règle")
-def show_rule_info(rule_key):
-    st.session_state["selected_rule"] = rule_key
-    st.session_state["show_dialog"] = True
-    #st.write(f"**{choosedRule['label']}**")
-    #st.write(choosedRule["description"])
-    if st.button("OK, j'ai compris !"):
-        close_dialog()
-        st.rerun()
-
-# Fonction pour fermer la boîte de dialogue
-def close_dialog():
-    st.session_state["show_dialog"] = False
-    st.rerun()
-
-# Sélection de la règle
 expectation_label = st.sidebar.selectbox(
     "Choisissez une règle de qualité :",
     options=list(expectations_mapping.keys()),
     format_func=lambda x: expectations_mapping[x]["label"],
-    #on_change=lambda: show_rule_info(expectation_label)
+    #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
 )
-
-if expectation_label:
-    show_rule_info(expectation_label)
-    st.rerun()
-
-# Affichage de la boîte de dialogue si nécessaire
-if st.session_state["show_dialog"]:
-    choosedRule = expectations_mapping[st.session_state["selected_rule"]]
-    
-    with st.expander("Explication de la règle", expanded=True):
-        st.write(f"### {choosedRule['label']}")
-        st.write(choosedRule["description"])
-        if st.button("OK, j'ai compris !"):
-            close_dialog()
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
     st.sidebar.warning(expectations_mapping[expectation_label]["description"])
 
 # Affichage d'une fenêtre modale pour la description
-if expectation_label:
-    with st.expander("Description de la règle"):
-        st.write(f"### {expectations_mapping[expectation_label]["label"]}")
-        st.write(expectations_mapping[expectation_label]["description"])
-        if st.button("OK, j'ai compris !"):
-            close_dialog()
+#if expectation_label:
+#    with st.expander("Description de la règle"):
+#        st.write(f"### {expectations_mapping[expectation_label]["label"]}")
+#        st.write(expectations_mapping[expectation_label]["description"])
 
 column_name = st.sidebar.text_input("Nom de la colonne :")
 
@@ -184,7 +179,18 @@ if expectation_label in [
 ]:
     value_set = st.sidebar.text_area("Liste des valeurs (séparées par des virgules) :")
     if value_set:
-        params["value_set"] = [v.strip() for v in value_set.split(",")]
+        # Convert values to numbers when possible, else keep as strings
+        params["value_set"] = []
+        for v in value_set.split(","):
+            v = v.strip()  # Strip extra spaces
+            try:
+                # Try converting to float if it's a number
+                if v.replace('.', '', 1).isdigit() or (v[0] == '-' and v[1:].replace('.', '', 1).isdigit()):
+                    params["value_set"].append(float(v))
+                else:
+                    params["value_set"].append(v)  # Leave as string
+            except ValueError:
+                params["value_set"].append(v)  # In case of any error, treat as string
 
 if expectation_label in ["expect_column_max_to_be_between", "expect_column_min_to_be_between", "expect_column_values_to_be_between", "expect_column_value_lengths_to_be_between"]:
     params["min_value"] = st.sidebar.number_input("Valeur minimale :", value=0.0)
@@ -221,7 +227,8 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
             st.session_state["rules"].append(config)
             with open(RULES_FILE, "w", encoding="utf-8") as file:
                 json.dump(st.session_state["rules"], file, indent=2)
-            
+                
+            st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
             st.sidebar.success("Règle ajoutée avec succès !")
             st.rerun()
 
@@ -230,7 +237,6 @@ st.header("Liste des Règles de Qualité")
 if st.session_state["rules"]:
     rules_table = [
         {
-            #"Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
             "Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"])["label"],
             "Colonne": rule["expectation_config"]["kwargs"]["column"],
             "Paramètres": rule["expectation_config"]["kwargs"],
@@ -238,13 +244,14 @@ if st.session_state["rules"]:
         for rule in st.session_state["rules"]
     ]
     st.table(rules_table)
-    
+
     #Affichage du boutton pour exporter au début
     st.download_button(
         label="Exporter les règles en JSON",
         data=json.dumps(st.session_state["rules"], indent=2),
         file_name=RULES_FILE,
         mime="application/json",
+        type="primary"
     )
 
     for index, rule in enumerate(st.session_state["rules"]):
@@ -256,13 +263,15 @@ if st.session_state["rules"]:
             if st.button("Modifier", key=f"edit_{index}"):
                 st.session_state["edit_index"] = index
                 st.session_state["edit_rule"] = rule
+                st.session_state.show_dialog = False  # Fermer la boîte de dialogue
 
         with col2:
             if st.button("Supprimer", key=f"delete_{index}"):
                 st.session_state["rules"].pop(index)
                 with open(RULES_FILE, "w", encoding="utf-8") as file:
                     json.dump(st.session_state["rules"], file, indent=2)
-                    st.rerun()
+                    st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
+                st.rerun()
 
 else:
     st.info("Aucune règle ajoutée pour le moment.")

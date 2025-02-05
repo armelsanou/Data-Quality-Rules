@@ -132,7 +132,7 @@ navbar()
 
 # Sidebar pour la gestion des règles
 st.sidebar.header("Gestion des Règles de Qualité")
-st.sidebar.subheader("Ajouter / Modifier une Règle", type='success')
+st.sidebar.subheader("Ajouter / Modifier une Règle")
 
 # Boîte de dialogue pour afficher la description de la règle sélectionnée
 @st.dialog("Explication de la règle")

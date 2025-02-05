@@ -54,10 +54,6 @@ if "rules" not in st.session_state:
     else:
         st.session_state["rules"] = []
 
-# Initialiser l'état de la boîte de dialogue
-if "show_dialog" not in st.session_state:
-    st.session_state["show_dialog"] = False
-
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": {
@@ -136,42 +132,20 @@ expectation_label = st.sidebar.selectbox(
     options=list(expectations_mapping.keys()),
     format_func=lambda x: expectations_mapping[x]["label"],
     #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
-    on_change=lambda: show_rule_info(expectation_label)
 )
 
-# Fonction pour afficher la boîte de dialogue
-def show_rule_info(rule_key):
-    st.session_state["expectation_label"] = rule_key
-    st.session_state["show_dialog"] = True
-
-# Fonction pour fermer la boîte de dialogue
-def close_dialog():
-    st.session_state["show_dialog"] = False
-    st.rerun()
-
-#if expectation_label:
-    #show_rule_info(expectation_label)
-
-# Affichage de la boîte de dialogue si nécessaire
-if st.session_state["show_dialog"]:
-    #choosedRule = expectations_mapping[st.session_state["expectation_label"]]
-    
-    with st.expander("Explication de la règle", expanded=True):
-        st.write(f"### {expectations_mapping[expectation_label]["label"]}")
-        st.write(expectations_mapping[expectation_label]["description"])
-        st.rerun()
-        if st.button("OK, j'ai compris !"):
-            close_dialog()
+if expectation_label:
+    show_rule_info(expectation_label)
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
     st.sidebar.warning(expectations_mapping[expectation_label]["description"])
 
 # Affichage d'une fenêtre modale pour la description
-#if expectation_label:
-    #with st.expander("Description de la règle"):
-        #st.write(f"### {expectations_mapping[expectation_label]["label"]}")
-        #st.write(expectations_mapping[expectation_label]["description"])
+if expectation_label:
+    with st.expander("Description de la règle"):
+        st.write(f"### {expectations_mapping[expectation_label]["label"]}")
+        st.write(expectations_mapping[expectation_label]["description"])
 
 column_name = st.sidebar.text_input("Nom de la colonne :")
 

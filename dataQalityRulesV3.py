@@ -54,9 +54,19 @@ if "rules" not in st.session_state:
     else:
         st.session_state["rules"] = []
 
-# États pour contrôler l'affichage des boîtes de dialogue
+# Initialiser l'état de la boîte de dialogue
 if "show_dialog" not in st.session_state:
-    st.session_state.show_dialog = False
+    st.session_state["show_dialog"] = False
+
+# Fonction pour afficher la boîte de dialogue
+def show_rule_info(rule_key):
+    st.session_state["selected_rule"] = rule_key
+    st.session_state["show_dialog"] = True
+
+# Fonction pour fermer la boîte de dialogue
+def close_dialog():
+    st.session_state["show_dialog"] = False
+    st.rerun()
 
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
@@ -121,16 +131,10 @@ navbar()
 st.sidebar.header("Gestion des Règles de Qualité")
 st.sidebar.subheader("Ajouter / Modifier une Règle")
 
-# Fonction pour fermer la boîte de dialogue
-def close_dialog():
-    st.session_state.show_dialog = False
-
 # Boîte de dialogue pour afficher la description de la règle sélectionnée
 @st.dialog("Explication de la règle")
 def show_rule_info(rule_key):
     choosedRule = expectations_mapping[rule_key]
-    st.session_state.show_dialog = True
-    #with st.dialog("Explication de la règle"):
     st.write(f"**{choosedRule['label']}**")
     st.write(choosedRule["description"])
     if st.button("OK, j'ai compris !"):
@@ -142,10 +146,21 @@ expectation_label = st.sidebar.selectbox(
     options=list(expectations_mapping.keys()),
     format_func=lambda x: expectations_mapping[x]["label"],
     #on_change=show_rule_info(expectation_label),  # Afficher la boîte de dialogue sur sélection
+    on_change=lambda: show_rule_info(expectation_label)
 )
 
-if expectation_label:
-    show_rule_info(expectation_label)
+#if expectation_label:
+    #show_rule_info(expectation_label)
+
+# Affichage de la boîte de dialogue si nécessaire
+if st.session_state["show_dialog"]:
+    choosedRule = expectations_mapping[st.session_state["selected_rule"]]
+    
+    with st.expander("Explication de la règle", expanded=True):
+        st.write(f"### {choosedRule['label']}")
+        st.write(choosedRule["description"])
+        if st.button("OK, j'ai compris !"):
+            close_dialog()
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
@@ -206,8 +221,7 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
             st.session_state["rules"].append(config)
             with open(RULES_FILE, "w", encoding="utf-8") as file:
                 json.dump(st.session_state["rules"], file, indent=2)
-                
-            st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
+            
             st.sidebar.success("Règle ajoutée avec succès !")
             st.rerun()
 
@@ -242,14 +256,12 @@ if st.session_state["rules"]:
             if st.button("Modifier", key=f"edit_{index}"):
                 st.session_state["edit_index"] = index
                 st.session_state["edit_rule"] = rule
-                st.session_state.show_dialog = False  # Fermer la boîte de dialogue
 
         with col2:
             if st.button("Supprimer", key=f"delete_{index}"):
                 st.session_state["rules"].pop(index)
                 with open(RULES_FILE, "w", encoding="utf-8") as file:
                     json.dump(st.session_state["rules"], file, indent=2)
-                    st.session_state.show_dialog = False  # Fermer la boîte de dialogue après ajout
                     st.rerun()
 
 else:

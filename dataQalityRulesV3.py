@@ -159,7 +159,7 @@ if expectation_label:
 
 # Affichage d'une alerte expliquant la règle sélectionnée
 if expectation_label:
-    st.sidebar.warning(expectations_mapping[expectation_label]["label"])
+    st.sidebar.warning(expectations_mapping[expectation_label]["description"])
 
 # Affichage d'une fenêtre modale pour la description
 if expectation_label:
@@ -226,7 +226,8 @@ st.header("Liste des Règles de Qualité")
 if st.session_state["rules"]:
     rules_table = [
         {
-            "Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
+            #"Règle": expectations_mapping.get(rule["expectation_config"]["expectation_type"], rule["expectation_config"]["expectation_type"]),
+            "Règle": expectations_mapping[rule["expectation_config"]["expectation_type"]]["label"]
             "Colonne": rule["expectation_config"]["kwargs"]["column"],
             "Paramètres": rule["expectation_config"]["kwargs"],
         }

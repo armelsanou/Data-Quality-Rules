@@ -55,7 +55,7 @@ if "rules" not in st.session_state:
         st.session_state["rules"] = []
 
 # Définition des règles et de leurs libellés lisibles
-"""expectations_mapping = {
+""" expectations_mapping = {
     "expect_column_distinct_values_to_be_in_set": "Vérifier les valeurs distinctes dans un ensemble",
     "expect_column_distinct_values_to_contain_set": "Vérifier si un ensemble est contenu dans les valeurs distinctes",
     "expect_column_distinct_values_to_equal_set": "Vérifier si les valeurs distinctes sont égales à un ensemble",
@@ -69,7 +69,7 @@ if "rules" not in st.session_state:
     "expect_column_values_to_be_null": "Vérifier que les valeurs sont nulles",
     "expect_column_values_to_be_unique": "Vérifier l'unicité des valeurs dans une colonne",
     "expect_column_values_to_match_regex": "Vérifier que les valeurs respectent une expression régulière",
-}"""
+} """
 
 # Définition des règles et de leurs descriptions
 expectations_mapping = {
@@ -137,9 +137,9 @@ st.sidebar.subheader("Ajouter / Modifier une Règle")
 # Boîte de dialogue pour afficher la description de la règle sélectionnée
 @st.dialog("Explication de la règle")
 def show_rule_info(rule_key):
-    rule = expectations_mapping[rule_key]
-    st.write(f"**{rule['label']}**")
-    st.write(rule["description"])
+    choosedRule = expectations_mapping[rule_key]
+    st.write(f"**{choosedRule['label']}**")
+    st.write(choosedRule["description"])
     if st.button("OK, j'ai compris !"):
         st.rerun()
 
@@ -162,7 +162,7 @@ if expectation_label:
 if expectation_label:
     with st.expander("Description de la règle"):
         st.write(f"### {expectations_mapping[expectation_label]["label"]}")
-        st.write("Voici une explication détaillée de la règle sélectionnée...")
+        st.write(expectations_mapping[expectation_label]["description"])
 
 column_name = st.sidebar.text_input("Nom de la colonne :")
 

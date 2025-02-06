@@ -250,7 +250,7 @@ if st.session_state["rules"]:
     )
 
     for index, rule in enumerate(st.session_state["rules"]):
-        st.sidebar.markdown("---")  # Ligne de séparation
+        st.markdown("---")  # Ligne de séparation
         st.write(f"### Règle {index + 1}")
         st.json(rule)
 

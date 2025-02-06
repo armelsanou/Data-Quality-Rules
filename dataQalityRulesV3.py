@@ -251,7 +251,8 @@ if st.session_state["rules"]:
 
     for index, rule in enumerate(st.session_state["rules"]):
         st.markdown("---")  # Ligne de séparation
-        st.write(f"### Règle {index + 1}")
+        #st.write(f"### Règle {index + 1} : Vérification sur la colonne {rule['expectation_config']['kwargs']['column']}")
+        st.write(f"### Règle {index + 1} : Vérification sur la colonne <span style='color:red;'>{rule['expectation_config']['kwargs']['column']}</span>", unsafe_allow_html=True)
         st.json(rule)
 
         col1, col2 = st.columns(2)

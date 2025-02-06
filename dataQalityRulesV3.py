@@ -228,7 +228,8 @@ if st.sidebar.button("Ajouter / Modifier la règle"):
             st.rerun()
 
 # Affichage des règles enregistrées
-st.header("Liste des Règles de Qualité <span style='color:green;'>{length(st.session_state["rules"])}</span>", unsafe_allow_html=True)
+#st.header("Liste des Règles de Qualité")
+st.markdown(f"### Liste des Règles de Qualité : <span style='color:green;'>{len(st.session_state['rules'])}</span>", unsafe_allow_html=True)
 if st.session_state["rules"]:
     rules_table = [
         {
